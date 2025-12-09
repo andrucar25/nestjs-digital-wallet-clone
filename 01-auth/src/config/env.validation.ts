@@ -1,4 +1,3 @@
-// src/config/env.validation.ts
 import { z } from 'zod';
 
 export const envSchema = z.object({
@@ -19,8 +18,8 @@ export const envSchema = z.object({
   // ================================
   // KAFKA
   // ================================
-  // KAFKA_BROKER: z.string().min(1, "KAFKA_BROKER is required"),
-
+  KAFKA_BROKER: z.string(),
+  KAFKA_CLIENT_ID: z.string(),
   // ================================
   // JWT
   // ================================

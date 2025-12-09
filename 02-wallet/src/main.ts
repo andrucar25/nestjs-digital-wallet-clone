@@ -25,10 +25,10 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [config.get<string>('KAFKA_BROKER')!],
+        brokers: [config.get<string>('KAFKA_BROKER')!]
       },
       consumer: {
-        groupId: 'wallet-service-group',
+        groupId: config.get<string>('KAFKA_GROUP_ID')!
       },
     },
   });

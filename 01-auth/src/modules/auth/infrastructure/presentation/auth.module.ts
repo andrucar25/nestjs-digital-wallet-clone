@@ -52,7 +52,7 @@ import { KafkaProducer } from './kafka.producer';
           transport: Transport.KAFKA,
           options: {
             client: {
-              clientId: 'auth-service-producer',
+              clientId: config.get<string>('KAFKA_CLIENT_ID'),
               brokers: [config.get<string>('KAFKA_BROKER')!],
             },
             producerOnlyMode: true,

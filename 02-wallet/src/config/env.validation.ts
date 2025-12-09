@@ -15,7 +15,7 @@ export const envSchema = z.object({
   // --- KAFKA ---
   KAFKA_BROKER: z.string(),
   KAFKA_CLIENT_ID: z.string().default("wallet-service-client"),
-  KAFKA_GROUP_ID: z.string().default("wallet-service-group"),
+  KAFKA_GROUP_ID: z.string(),
 
   // --- SECURITY ---
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
