@@ -8,7 +8,7 @@ import { User } from '../../users/domain/user';
 import { AuthTokens, YupiJwtPayload } from '../domain/auth.types';
 import { RefreshToken } from '../infrastructure/entities/auth.entity';
 import { InvalidCredentialsException } from '../../../core/exceptions/auth.exception';
-// import { KafkaProducer } from '../infrastructure/presentation/kafka.producer';
+import { KafkaProducer } from '../infrastructure/presentation/kafka.producer';
 import { ConfigService } from '@nestjs/config';
 import { AuthRepository } from '../domain/repositories/auth.repository';
 
@@ -22,7 +22,7 @@ export class AuthApplication {
     private readonly jwtService: JwtService,
     @Inject(AuthRepository)
     private readonly authRepo: AuthRepository,
-    // private readonly kafkaProducer: KafkaProducer,
+    private readonly kafkaProducer: KafkaProducer,
     private readonly configService: ConfigService,
   ) {
     this.accessTokenTtl = this.configService.get('JWT_EXPIRES_IN')!;
@@ -46,11 +46,12 @@ export class AuthApplication {
 
     const createdUser = saveResult.value;
 
-    // await this.kafkaProducer.emitUserCreated({
-    //   userId: createdUser.properties().id!,
-    //   phone,
-    //   email,
-    // });
+    await this.kafkaProducer.emitUserCreated({
+      id: createdUser.properties().id!,
+      phone,
+      email,
+      fullName
+    });
 
     const tokens = await this.generateTokens(createdUser);
 

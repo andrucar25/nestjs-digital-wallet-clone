@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
-// import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AuthController } from './auth.controller';
@@ -16,7 +16,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { EnvVars } from 'src/config/env.validation';
 import { AuthRepository } from '../../domain/repositories/auth.repository';
-// import { KafkaProducer } from './kafka.producer';
+import { KafkaProducer } from './kafka.producer';
 
 @Module({
   imports: [
@@ -42,22 +42,24 @@ import { AuthRepository } from '../../domain/repositories/auth.repository';
       },
     }),
 
-    // Cliente Kafka para emitir eventos (USER_CREATED)
-    // ClientsModule.registerAsync([
-    //   {
-    //     name: 'AUTH_KAFKA_CLIENT',
-    //     imports: [ConfigModule],
-    //     inject: [ConfigService],
-    //     useFactory: (config: ConfigService) => ({
-    //       transport: Transport.KAFKA,
-    //       options: {
-    //         client: {
-    //           brokers: [config.get<string>('KAFKA_BROKER')!],
-    //         },
-    //       },
-    //     }),
-    //   },
-    // ]),
+    // kafka client to emit events (USER_CREATED)
+    ClientsModule.registerAsync([
+      {
+        name: 'AUTH_KAFKA_CLIENT',
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (config: ConfigService) => ({
+          transport: Transport.KAFKA,
+          options: {
+            client: {
+              clientId: 'auth-service-producer',
+              brokers: [config.get<string>('KAFKA_BROKER')!],
+            },
+            producerOnlyMode: true,
+          },
+        }),
+      },
+    ]),
   ],
   controllers: [AuthController],
   providers: [
@@ -69,7 +71,7 @@ import { AuthRepository } from '../../domain/repositories/auth.repository';
   },
     JwtStrategy,
     JwtAuthGuard,
-    // KafkaProducer,
+    KafkaProducer,
   ],
   exports: [
     AuthApplication,
