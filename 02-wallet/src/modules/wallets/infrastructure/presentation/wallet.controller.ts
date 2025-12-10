@@ -13,7 +13,7 @@ import {
 } from '../../../../core/exceptions/wallet.exception';
 import { WalletResponseDto } from './dtos/wallet-response.dto';
 
-@Controller('wallet')
+@Controller('wallets')
 export class WalletController {
   constructor(
     @Inject(WalletApplication)
