@@ -45,6 +45,7 @@ export class PaymentInfrastructure implements PaymentRepository {
         }),
       );
     } catch (error: any) {
+      console.log("🚀 ~ PaymentInfrastructure ~ error:", error)
       const msg =
         error?.response?.data?.message ||
         error?.message ||

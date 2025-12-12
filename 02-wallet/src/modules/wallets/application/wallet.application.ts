@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { WalletRepository } from '../domain/repositories/wallet.repository';
+import { WalletRepository, WalletTransferResult } from '../domain/repositories/wallet.repository';
 
 @Injectable()
 export class WalletApplication {
@@ -14,6 +14,15 @@ export class WalletApplication {
 
   async getByUserId(userId: string) {
     return this.repository.findByUserId(userId);
+  }
+
+  async transfer(
+    fromUserId: string,
+    toUserId: string,
+    amount: number,
+    currency: string,
+  ): Promise<WalletTransferResult> {
+    return this.repository.transfer(fromUserId, toUserId, amount, currency);
   }
 
 }

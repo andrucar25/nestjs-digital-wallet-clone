@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 
 import { PaymentEntity } from '../entities/payment.entity';
 import { PaymentInfrastructure } from '../payment.infrastructure';
@@ -10,7 +13,9 @@ import { PaymentsApplication } from '../../application/payments.application';
 import { PaymentsController } from './payment.controller';
 import { PaymentsKafkaProducer } from './kafka.producer';
 import { PaymentsKafkaConsumer } from './kafka.consumer';
-import { HttpModule } from '@nestjs/axios';
+import { JwtStrategy } from 'src/core/guards/jwt.strategy';
+import { JwtAuthGuard } from 'src/core/guards/jwt-auth.guard';
+
 
 @Module({
   imports: [
@@ -36,6 +41,14 @@ import { HttpModule } from '@nestjs/axios';
         }),
       },
     ]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.getOrThrow('JWT_SECRET'),
+      }),
+    }),
   ],
   controllers: [PaymentsController, PaymentsKafkaConsumer],
   providers: [
@@ -46,6 +59,8 @@ import { HttpModule } from '@nestjs/axios';
       provide: PaymentRepository,
       useExisting: PaymentInfrastructure,
     },
+    JwtStrategy,      
+    JwtAuthGuard
   ],
   exports: [PaymentsApplication, PaymentRepository],
 })

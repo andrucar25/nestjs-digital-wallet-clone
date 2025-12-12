@@ -27,3 +27,21 @@ export class WalletNotFoundException extends BaseException {
     this.name = ErrorMessage.WALLET_NOT_FOUND_EXCEPTION;
   }
 }
+
+export class WalletInsufficientFundsException extends BaseException {
+  status = 400;
+
+  constructor(message: string, stack?: string) {
+    super(message, stack);
+    this.name = 'WALLET_INSUFFICIENT_FUNDS';
+  }
+}
+
+export class WalletTransferDatabaseException extends BaseException {
+  status = 500;
+
+  constructor(message: string, stack?: string) {
+    super(message, stack);
+    this.name = 'WALLET_TRANSFER_DATABASE_EXCEPTION';
+  }
+}
