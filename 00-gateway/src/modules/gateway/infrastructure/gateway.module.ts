@@ -21,7 +21,8 @@ import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
         const isProd = nodeEnv === 'production';
 
         return {
-          autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+          autoSchemaFile: isProd ? true : join(process.cwd(), 'src/schema.gql'),
+          // autoSchemaFile: true,
           sortSchema: true,
           playground: !isProd,            // OWASP: disable in prod
           introspection: !isProd,         // OWASP: disable in prod
